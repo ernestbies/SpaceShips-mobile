@@ -4,6 +4,7 @@ import com.shipsgame.domain.dto.StatusDto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Game implements Serializable {
@@ -42,4 +43,14 @@ public class Game implements Serializable {
         return board;
     }
 
+    @Override
+    public String toString() {
+        return "Game{" +
+                "steps=" + steps +
+                ", user='" + user + '\'' +
+                ", board=" + Arrays.toString(board) +
+                ", shipsList=" + shipsList +
+                ", boardNumbers=" + Arrays.toString(boardNumbers) +
+                '}';
+    }
 }
