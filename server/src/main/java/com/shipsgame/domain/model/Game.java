@@ -24,7 +24,7 @@ public class Game implements Serializable {
 
     //function to get game status
     public StatusDto getStatus() {
-        return null;
+        return (new StatusDto("LOADGAME", "", 0, steps, new String(board)));
     }
 
     //function to get number of steps
