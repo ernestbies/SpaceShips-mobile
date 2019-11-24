@@ -43,6 +43,7 @@ public class Game implements Serializable {
         return board;
     }
 
+    //toString() function
     @Override
     public String toString() {
         return "Game{" +
