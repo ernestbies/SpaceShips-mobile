@@ -21,10 +21,12 @@ public class Game implements Serializable {
         this.board = new char[81];
         this.shipsList = new ArrayList<>();
         this.boardNumbers = new int[9][9];
+
+        boardGenerating();
     }
 
     //function to get game status
-    public StatusDto getStatus() {
+    public StatusDto getStatus(){
         return (new StatusDto("LOADGAME", "", 0, steps, new String(board)));
     }
 
@@ -44,12 +46,12 @@ public class Game implements Serializable {
     }
 
     //function which generates ships on board
-    private void boardGenerating() {
+    private void boardGenerating(){
         int length, orientation, pozX, pozY, number;
         int xmin, xmax, ymin, ymax;
         boolean find;
 
-        for (int i = 0; i < 81; i++) {
+        for (int i=0; i < 81; i++) {
             board[i] = ' ';
         }
 
@@ -93,23 +95,23 @@ public class Game implements Serializable {
                                 //boardNumbers[number][pozY] != 0 - position is occupied
                                 find = false;
                             }
-                            if (number - 1 >= 0) {
+                            if (number - 1 >= 0){
                                 //ships can't touch each others, check if position is not occupied and fits on the board
-                                if (boardNumbers[number - 1][pozY] != 0) {
+                                if (boardNumbers[number - 1][pozY] != 0){
                                     find = false;
                                 }
                             }
-                            if (number + 1 < 9) {
-                                if (boardNumbers[number + 1][pozY] != 0) {
+                            if (number + 1 <9){
+                                if (boardNumbers[number + 1][pozY] != 0){
                                     find = false;
                                 }
                             }
-                            if (pozY - 1 >= 0) {
+                            if (pozY - 1 >=0){
                                 if (boardNumbers[number][pozY - 1] != 0) {
                                     find = false;
                                 }
                             }
-                            if (pozY + 1 < 9) {
+                            if (pozY + 1 < 9){
                                 if (boardNumbers[number][pozY + 1] != 0) {
                                     find = false;
                                 }
@@ -121,7 +123,7 @@ public class Game implements Serializable {
                             //if (find) - I checked positions, positions are not occupied, ship can be placed on board
                             for (int m = 0; m < shipsList.get(i).getType(); m++) {
                                 number = pozX + m;
-                                boardNumbers[number][pozY] = (shipsList.get(i).getType()) * (-1);
+                                boardNumbers[number][pozY] = (shipsList.get(i).getType())*(-1);
                                 //multiply by (-1) because later I must know what positions are occupied by ships
                                 //negative numbers represents the postions of ships
                                 //positive numbers represents the number of occupied positions around
@@ -143,22 +145,22 @@ public class Game implements Serializable {
                             if (boardNumbers[pozX][number] != 0) {
                                 find = false;
                             }
-                            if (number - 1 >= 0) {
+                            if (number - 1 >= 0 ){
                                 if (boardNumbers[pozX][number - 1] != 0) {
                                     find = false;
                                 }
                             }
-                            if (number + 1 < 9) {
+                            if (number + 1 < 9 ){
                                 if (boardNumbers[pozX][number + 1] != 0) {
                                     find = false;
                                 }
                             }
-                            if (pozX - 1 >= 0) {
+                            if (pozX - 1 >= 0){
                                 if (boardNumbers[pozX - 1][number] != 0) {
                                     find = false;
                                 }
                             }
-                            if (pozX + 1 < 9) {
+                            if (pozX + 1 < 9){
                                 if (boardNumbers[pozX + 1][number] != 0) {
                                     find = false;
                                 }
@@ -168,7 +170,7 @@ public class Game implements Serializable {
                         if (find) {
                             for (int m = 0; m < shipsList.get(i).getType(); m++) {
                                 number = pozY + m;
-                                boardNumbers[pozX][number] = (shipsList.get(i).getType()) * (-1);
+                                boardNumbers[pozX][number] = (shipsList.get(i).getType())*(-1);
                                 tmpPos.add("" + pozX + "" + number);
                             }
                             shipsList.get(i).setPositions(tmpPos);
@@ -181,8 +183,8 @@ public class Game implements Serializable {
         //for each ship, calculating how many ships are around
         //xmin - xmax -> range checked for position X
         //ymin - ymax -> range checked for position Y
-        for (int y = 0; y < 9; y++) {
-            for (int x = 0; x < 9; x++) {
+        for(int y=0;y<9;y++){
+            for(int x=0;x<9;x++) {
                 if (boardNumbers[x][y] >= 0) {
                     ymin = y - 1;
                     ymax = y + 1;
@@ -268,7 +270,7 @@ public class Game implements Serializable {
         }
     }
 
-    //toString() function
+    //toString() method
     @Override
     public String toString() {
         return "Game{" +
