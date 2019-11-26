@@ -218,6 +218,56 @@ public class Game implements Serializable {
         }
     }
 
+    //function which checks if spaceship was hit or not
+    public StatusDto shot(String position) {
+        int p, m, pos;
+        int x, y;
+        boolean hit = false;
+        StatusDto status;
+
+        if (shipsList.isEmpty()){
+            return new StatusDto("ENDGAME","", 0, steps, new String(board));
+        }
+
+        x = Integer.parseInt(position.substring(0,1));
+        y = Integer.parseInt(position.substring(1,2));
+        pos = 9 * y + x;
+
+        steps++;
+        m = 0;
+        while((m < shipsList.size()) & !hit) {
+
+            hit = false;
+            p = 0;
+            while((p < shipsList.get(m).getPositions().size()) & !hit) {
+                if (shipsList.get(m).getPositions().remove(position)) {
+                    hit = true;
+                    board[pos] = (char) (64 + shipsList.get(m).getType());
+
+                    if (shipsList.get(m).getPositions().isEmpty()) {
+                        status = new StatusDto("SHOTDOWN", shipsList.get(m).getName(), shipsList.get(m).getType(), steps, new String(board));
+                        shipsList.remove(m);
+                        if (shipsList.isEmpty()) {
+                            status = new StatusDto("ENDGAME","", 0, steps, new String(board));
+                        }
+                        return status;
+                    } else {
+                        return (new StatusDto("HIT", shipsList.get(m).getName(), shipsList.get(m).getType(), steps, new String(board)));
+                    }
+                }
+                p++;
+            }
+            m++;
+        }
+
+        if (board[pos] == ' ') {
+            board[pos] = String.valueOf(boardNumbers[x][y]).charAt(0);
+            return (new StatusDto("MISS", "", 0, steps, new String(board)));
+        } else {
+            return (new StatusDto("CHECKED", "", 0, steps, new String(board)));
+        }
+    }
+
     //toString() function
     @Override
     public String toString() {
