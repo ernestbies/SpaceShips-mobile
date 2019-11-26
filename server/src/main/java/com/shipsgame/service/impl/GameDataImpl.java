@@ -18,6 +18,7 @@ public class GameDataImpl implements GameDataService {
     //the set of games must only be created once
     private static GameDataImpl instance = null;
 
+    //static method to get instance
     public static GameDataImpl getInstance() {
         if (instance == null) {
             instance = new GameDataImpl();
@@ -27,7 +28,6 @@ public class GameDataImpl implements GameDataService {
 
     //constructor which creates list of games
     public GameDataImpl() {
-
         File file = new File("games.dat");
         if (file.exists()) {
         } else {
