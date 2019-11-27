@@ -1,5 +1,6 @@
 package com.shipsgame.rest;
 
+import com.shipsgame.domain.dto.ErrorOrder;
 import com.shipsgame.domain.dto.StatusDto;
 import com.shipsgame.service.GameDataService;
 import com.shipsgame.service.impl.GameDataImpl;
@@ -34,6 +35,9 @@ public class GameController {
 
     @RequestMapping(value = "/shotgame", method = RequestMethod.GET)
     public ResponseEntity<StatusDto> setShot(@RequestParam String user, @RequestParam String shot) {
+        if(!shot.matches("\\d\\d")) {
+            throw new ErrorOrder("Error order send!");
+        }
         final StatusDto status = gameData.shotGame(user, shot);
         return new ResponseEntity<>(status, HttpStatus.OK);
     }
