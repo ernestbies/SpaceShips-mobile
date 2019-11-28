@@ -30,7 +30,7 @@ public class GameDataImpl implements GameDataService {
     public GameDataImpl() {
         File file = new File("games.dat");
         if (file.exists()) {
-            
+            readFile();
         } else {
             games = new ArrayList<Game>();
         }
@@ -55,10 +55,12 @@ public class GameDataImpl implements GameDataService {
             if (g.getUser().contains(user)) {
                 int gameIndex = games.indexOf(g);
                 games.set(gameIndex, newGame);
+                saveFile();
                 return (new StatusDto("NEWGAME", "", 0, newGame.getSteps(), new String(newGame.getBoard())));
             }
         }
         games.add(newGame);
+        saveFile();
         return (new StatusDto("NEWGAME", "", 0, newGame.getSteps(), new String(newGame.getBoard())));
     }
 
@@ -68,6 +70,7 @@ public class GameDataImpl implements GameDataService {
         for (Game g : games) {
             if (g.getUser().contains(user)) {
                 StatusDto status = g.shot(shot);
+                saveFile();
                 return status;
             }
         }
