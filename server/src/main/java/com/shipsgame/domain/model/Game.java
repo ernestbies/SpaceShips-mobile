@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Game implements Serializable {
+    
+    private static final long serialVersionUID = 3L;
     private int steps; //number of steps
     private String user; //username
     private char[] board; //current state of board

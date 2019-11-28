@@ -30,6 +30,7 @@ public class GameDataImpl implements GameDataService {
     public GameDataImpl() {
         File file = new File("games.dat");
         if (file.exists()) {
+            
         } else {
             games = new ArrayList<Game>();
         }
@@ -71,5 +72,31 @@ public class GameDataImpl implements GameDataService {
             }
         }
         return (new StatusDto("SHOT", "", 0, 0, ""));
+    }
+    //function to save users games to file
+    private void saveFile() {
+        try{
+            FileOutputStream fileOut = new FileOutputStream("games.dat");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(games);
+            out.close();
+            fileOut.close();
+        }catch (IOException i){
+            i.printStackTrace();
+        }
+    }
+    //function to read users games from file
+    public void readFile() {
+        try {
+            FileInputStream fileIn = new FileInputStream("games.dat");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            games = (ArrayList<Game>) in.readObject();
+            in.close();
+            fileIn.close();
+        }catch (IOException i){
+            i.printStackTrace();
+        }catch (ClassNotFoundException c){
+            c.printStackTrace();
+        }
     }
 }
