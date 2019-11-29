@@ -191,5 +191,18 @@ public class GameDataImpl implements GameDataService {
         }
         return rank;
     }
-    
+    public StatusDto getRank(){
+        File plik = new File("rank.dat");
+        if(plik.exists()){
+            List<String> rank = readRank();
+            String str = "";
+            for(int i=0; i<rank.size(); i++){
+                str += rank.get(i) + "\n";
+            }
+            return (new StatusDto("RANK", "", 0, 0, str));
+        }else{
+            return(new StatusDto("RANK", "", 0, 0, ""));
+        }
+
+    }
 }

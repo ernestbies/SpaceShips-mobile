@@ -41,5 +41,9 @@ public class GameController {
         final StatusDto status = gameData.shotGame(user, shot);
         return new ResponseEntity<>(status, HttpStatus.OK);
     }
-
+    @RequestMapping(value = "/getrank", method = RequestMethod.GET)
+    public ResponseEntity<StatusDto> getRank() {
+        final StatusDto status = gameData.getRank();
+        return new ResponseEntity<>(status, HttpStatus.OK);
+    }
 }
