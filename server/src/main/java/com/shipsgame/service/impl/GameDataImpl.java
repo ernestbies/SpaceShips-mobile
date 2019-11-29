@@ -136,4 +136,60 @@ public class GameDataImpl implements GameDataService {
         }
         return ranks;
     }
+    public void setRank(String user, int steps){
+        List<String> ranks = new ArrayList<>();
+        List<String> names = new ArrayList<>();
+        String newRank = user + " " + steps;
+        int index=0;
+
+        File plik = new File("rank.dat");
+        if (plik.exists()) {
+            ranks = readRank();
+            int rSize = ranks.size();
+            for(int i=0; i<rSize; i++){
+                names.add(ranks.get(i).split(" ")[0]);
+                if(ranks.get(i).split(" ")[0].equals(user)){
+                    index = i;
+                }
+            }
+
+            if(rSize>=10){
+                if(names.contains(user) && Integer.parseInt(ranks.get(index).split(" ")[1]) > steps){
+                    ranks.set(index, newRank);
+                }
+                else if(!names.contains(user) && Integer.parseInt(ranks.get(rSize-1).split(" ")[1]) > steps){
+                    ranks.set(rSize-1, newRank);
+                }
+
+            }else{
+                if(names.contains(user) && Integer.parseInt(ranks.get(index).split(" ")[1]) > steps){
+                    ranks.set(index, newRank);
+                }else if(!names.contains(user)){
+                    ranks.add(newRank);
+                }
+            }
+            ranks = sortRank(ranks);
+            saveRank(ranks);
+        }else{
+            ranks.add(newRank);
+            saveRank(ranks);
+        }
+
+    }
+    //function to sort rank array
+    public List<String> sortRank(List<String> rank){
+        int n = rank.size();
+        String temp;
+        for(int i=0; i<n-1; i++){
+            for(int j=n-1; j>i; j--){
+                if(Integer.valueOf(rank.get(j).split(" ")[1]) < Integer.valueOf(rank.get(j-1).split(" ")[1])){
+                    temp = rank.get(j);
+                    rank.set(j, rank.get(j-1));
+                    rank.set(j-1, temp);
+                }
+            }
+        }
+        return rank;
+    }
+    
 }
