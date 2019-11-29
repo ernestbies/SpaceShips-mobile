@@ -4,6 +4,7 @@ import com.shipsgame.domain.dto.StatusDto;
 import com.shipsgame.domain.model.Game;
 import com.shipsgame.service.GameDataService;
 import org.springframework.stereotype.Service;
+import com.shipsgame.domain.model.Rank;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -101,5 +102,38 @@ public class GameDataImpl implements GameDataService {
         }catch (ClassNotFoundException c){
             c.printStackTrace();
         }
+    }
+    
+    //function to save rank
+    public void saveRank(List<String> rank){
+
+        try{
+            FileOutputStream fileOut = new FileOutputStream("rank.dat");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            Rank rk = new Rank(rank);
+            out.writeObject(rk);
+            out.close();
+            fileOut.close();
+        }catch (IOException i){
+            i.printStackTrace();
+        }
+
+    }
+    //function to get rank array
+    public List<String> readRank(){
+        List<String> ranks = new ArrayList<>();
+        try {
+            FileInputStream fileIn = new FileInputStream("rank.dat");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            Rank rk = (Rank) in.readObject();
+            ranks = rk.ranking;
+            in.close();
+            fileIn.close();
+        }catch (IOException i){
+            i.printStackTrace();
+        }catch (ClassNotFoundException c){
+            c.printStackTrace();
+        }
+        return ranks;
     }
 }
