@@ -1,7 +1,7 @@
 package com.shipsgame.domain.model;
 
 import com.shipsgame.domain.dto.StatusDto;
-
+import com.shipsgame.service.impl.GameDataImpl;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -230,6 +230,7 @@ public class Game implements Serializable {
         StatusDto status;
 
         if (shipsList.isEmpty()){
+            GameDataImpl.getInstance().setRank(user.substring(0,user.length()-32), steps);
             return new StatusDto("ENDGAME","", 0, steps, new String(board));
         }
 
@@ -252,6 +253,7 @@ public class Game implements Serializable {
                         status = new StatusDto("SHOTDOWN", shipsList.get(m).getName(), shipsList.get(m).getType(), steps, new String(board));
                         shipsList.remove(m);
                         if (shipsList.isEmpty()) {
+                            GameDataImpl.getInstance().setRank(user.substring(0,user.length()-32), steps);
                             status = new StatusDto("ENDGAME","", 0, steps, new String(board));
                         }
                         return status;
