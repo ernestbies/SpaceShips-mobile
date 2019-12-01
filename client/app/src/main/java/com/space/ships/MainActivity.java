@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -27,6 +28,10 @@ public class MainActivity extends AppCompatActivity {
     private int panelSize;
     private int size;
     private String board;
+    private Canvas canvas;
+    private Paint paint;
+    private Drawable mCustomImageA, mCustomImageB,mCustomImageC,mCustomImageD;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,22 +45,28 @@ public class MainActivity extends AppCompatActivity {
         mImageView = (ImageView) findViewById(R.id.imageView);
 
         init();
-        addTouchListner();
+        addTouchListener();
         draw();
-
     }
 
-    private void addTouchListner(){
+    private void addTouchListener(){
         mImageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                float x = event.getX();
-                float y = event.getY();
-                String text = "You click at x = " + x + " and y = " + y;
-                Log.d("Ships ",text);
+                float x=(float)Math.floor(event.getX()/size);
+                float y=(float)Math.floor(event.getY()/size);
+                shotGame(x,y);
                 return false;
             }
         });
+    }
+
+    private void shotGame(float x, float y){
+        char[] bo = board.toCharArray();
+        int pos=(int)(9*y+x);
+        bo[pos] = 'B';
+        board = String.valueOf(bo);
+        draw();
     }
 
 
@@ -68,25 +79,28 @@ public class MainActivity extends AppCompatActivity {
         for (int i =0;i<81;i++) {
             board+=" ";
         }
-
+        board="0 CCC2    45 3 C4CDDDD  C6C 3  1 C4C1 111 34 B32A11BB B3A 44  124 DDDD 01BB    10";
         panelSize = height-10;
         size = (panelSize/9);
         panelSize = 9 * size;
+
+        mCustomImageA = mImageView.getResources().getDrawable(R.drawable.a);
+        mCustomImageB = mImageView.getResources().getDrawable(R.drawable.b);
+        mCustomImageC = mImageView.getResources().getDrawable(R.drawable.c);
+        mCustomImageD = mImageView.getResources().getDrawable(R.drawable.d);
     }
 
     private void draw(){
-
-
-
         mImageView.requestLayout();
         mImageView.getLayoutParams().height = panelSize;
         mImageView.getLayoutParams().width = panelSize;
         int p;
 
         Bitmap bitmap = Bitmap.createBitmap(panelSize, panelSize, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        canvas.drawColor(Color.DKGRAY);
-        Paint paint = new Paint();
+        canvas = new Canvas(bitmap);
+//        canvas.drawColor(Color.DKGRAY);
+        canvas.drawColor(Color.argb(55,68, 74, 88));
+        paint = new Paint();
         paint.setColor(Color.WHITE);
         paint.setStrokeWidth(1);
 
@@ -95,40 +109,51 @@ public class MainActivity extends AppCompatActivity {
             canvas.drawLine(0, i*size+size, panelSize, i*size+size, paint);
         }
 
-        /*
+
         for (int y = 0; y < 9; y++) {
             for (int x = 0; x < 9; x++) {
                 p = y * 9 + x;
-                //canvas.drawLine(offset, canvas.getHeight() / 2, canvas.getWidth() - offset, canvas.getHeight() / 2, paint);
-
                 if (board.charAt(p) >= '0' && board.charAt(p) <= '9') {
-                    g.drawLine(x*size, y*size, x*size + size, y*size + size);
-                    g.drawLine(x*size, y*size + size, x*size + size, y*size);
-                    g.setColor(Color.WHITE);
-                    g.drawString(Character.toString(board.charAt(p)), x*size + (int) (size/2), y*size + (int) (size/4));
+                    canvas.drawLine(x*size, y*size, x*size + size, y*size + size,paint);
+                    canvas.drawLine(x*size, y*size + size, x*size + size, y*size,paint);
+                    canvas.drawText(Character.toString(board.charAt(p)),x*size + (int) (size/2), y*size + (int) (size/4),paint);
                 } else if (board.charAt(p) >= 'A' && board.charAt(p) <= 'Z'){
-                    image = ImageIO.read(new File("./images/"+Character.toString(board.charAt(p))+".jpg"));
-                    g.drawImage(image, x*size + 1, y*size + 1, size - 1, size - 1, null);
-
+//                    image = ImageIO.read(new File("./images/"+Character.toString(board.charAt(p))+".jpg"));
+//                    g.drawImage(image, x*size + 1, y*size + 1, size - 1, size - 1, null);
+                    testDraw(board.charAt(p),x*size + 1, y*size + 1, (x+1)*size - 1, (y+1)*size - 1);
+//                    testDraw2(x*size+1, y*size+1, size-1, size-1);
                 }
 
             }
-        */
 
         mImageView.setImageBitmap(bitmap);
 
-    }
 
-    /*
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if(event.getAction() == MotionEvent.ACTION_DOWN) {
-            String text = "You click at x = " + event.getX() + " and y = " + event.getY();
-            Log.d("Ships ",text);
         }
-        return super.onTouchEvent(event);
     }
-    */
 
+    private void testDraw(char c,int l, int t, int r, int b){
+
+        switch(c){
+            case 'A':
+                mCustomImageA.setBounds(l,t,r,b);
+                mCustomImageA.draw(canvas);
+                break;
+            case 'B':
+                mCustomImageB.setBounds(l,t,r,b);
+                mCustomImageB.draw(canvas);
+                break;
+            case 'C':
+                mCustomImageC.setBounds(l,t,r,b);
+                mCustomImageC.draw(canvas);
+                break;
+            case 'D':
+                mCustomImageD.setBounds(l,t,r,b);
+                mCustomImageD.draw(canvas);
+                break;
+        }
+
+
+    }
 }
 
