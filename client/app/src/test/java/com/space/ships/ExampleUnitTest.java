@@ -1,4 +1,4 @@
-package com.biegrzes.ships;
+package com.space.ships;
 
 import org.junit.Test;
 

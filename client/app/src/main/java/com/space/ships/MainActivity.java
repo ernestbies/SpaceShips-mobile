@@ -1,4 +1,4 @@
-package com.shipsgame;
+package com.space.ships;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;

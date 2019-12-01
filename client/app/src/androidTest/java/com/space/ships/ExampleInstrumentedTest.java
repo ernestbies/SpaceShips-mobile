@@ -1,4 +1,4 @@
-package com.biegrzes.ships;
+package com.space.ships;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.biegrzes.ships", appContext.getPackageName());
+        assertEquals("com.space.ships", appContext.getPackageName());
     }
 }
