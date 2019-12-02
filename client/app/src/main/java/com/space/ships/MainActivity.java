@@ -98,8 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
         Bitmap bitmap = Bitmap.createBitmap(panelSize, panelSize, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(bitmap);
-//        canvas.drawColor(Color.DKGRAY);
-        canvas.drawColor(Color.argb(55,68, 74, 88));
+        canvas.drawColor(Color.argb(150,68, 74, 88));
         paint = new Paint();
         paint.setColor(Color.WHITE);
         paint.setStrokeWidth(1);
