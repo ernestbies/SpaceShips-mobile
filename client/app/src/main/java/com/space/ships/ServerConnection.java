@@ -23,7 +23,7 @@ public class ServerConnection {
     }
 
 
-    void createConnection(){
+    static void createConnection(){
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(serverUrl)
                 .addConverterFactory(GsonConverterFactory.create())

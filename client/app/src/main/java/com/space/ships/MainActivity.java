@@ -12,11 +12,13 @@ import android.graphics.drawable.Drawable;
 import android.os.StrictMode;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -39,12 +41,10 @@ public class MainActivity extends AppCompatActivity {
     private ImageView mImageView;
     private int panelSize;
     private int size;
-    private String board;
+    private Bitmap bitmap;
     private Canvas canvas;
     private Paint paint;
     private Drawable mCustomImageA, mCustomImageB,mCustomImageC,mCustomImageD;
-    private ServerConnection serverConnection = new ServerConnection();
-    static ServerResponse serverResponse;
 
 
     @Override
@@ -79,8 +79,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void shotGame(int x, int y){
-        serverResponse = serverConnection.shotGame(""+x+y);
-        switch(serverResponse.getCode()){
+        ServerConnection.shotGame(""+x+y);
+        switch(ServerConnection.serverResponse.getCode()){
 
             case "MISS":
                 android.media.MediaPlayer.create(this,R.raw.miss).start();
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 LogActivity.textContent+="<font color=\"#FFFF00\">"+ServerConnection.user+"</font>"+" : "+"<font color=\"#008000\">"+ "["+(x+1) + " " + (y+1)+"]</font>" +" "+" field was already checked<br>";
                 new AlertDialog.Builder(this)
                         .setTitle("ENDGAME")
-                        .setMessage("Liczba kroków: "+serverResponse.getSteps())
+                        .setMessage("Liczba kroków: "+ServerConnection.serverResponse.getSteps())
                         .setPositiveButton("NEWGAME", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -129,21 +129,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void newGame(View v){
-        serverResponse = serverConnection.newGame();
+        ServerConnection.newGame();
+        bitmap = Bitmap.createBitmap(panelSize, panelSize, Bitmap.Config.ARGB_8888);
+        canvas = new Canvas(bitmap);
+        canvas.drawColor(Color.argb(150,68, 74, 88));
         draw();
     }
 
     private void checkGameStatus(){
-        serverResponse = serverConnection.getGame();
-        switch(serverResponse.getCode()){
+        ServerConnection.getGame();
+        switch(ServerConnection.serverResponse.getCode()){
             case "NOGAME":
-                serverConnection.newGame();
+                ServerConnection.newGame();
                 android.media.MediaPlayer.create(this,R.raw.newloadgame).start();
                 Toast.makeText(this,"New game created", Toast.LENGTH_LONG).show();
                 LogActivity.textContent+="<font color=\"#FFFF00\">"+ServerConnection.user+"</font>"+" : "+"<font color=\"#00FFFF\">"+"New game created</font><br>";
                 break;
             case "LOADGAME":
-                serverConnection.getGame();
                 android.media.MediaPlayer.create(this,R.raw.newloadgame).start();
                 Toast.makeText(this,"Game loaded", Toast.LENGTH_LONG).show();
                 LogActivity.textContent+="<font color=\"#FFFF00\">"+ServerConnection.user+"</font>"+" : "+"<font color=\"#00FFFF\">"+"Game loaded</font><br>";
@@ -156,11 +158,6 @@ public class MainActivity extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int height = displayMetrics.heightPixels;
 
-        board = "";
-        for (int i =0;i<81;i++) {
-            board+=" ";
-        }
-
         panelSize = height-10;
         size = (panelSize/9);
         panelSize = 9 * size;
@@ -169,8 +166,15 @@ public class MainActivity extends AppCompatActivity {
         mCustomImageB = mImageView.getResources().getDrawable(R.drawable.b);
         mCustomImageC = mImageView.getResources().getDrawable(R.drawable.c);
         mCustomImageD = mImageView.getResources().getDrawable(R.drawable.d);
+        bitmap = Bitmap.createBitmap(panelSize, panelSize, Bitmap.Config.ARGB_8888);
+        canvas = new Canvas(bitmap);
+        canvas.drawColor(Color.argb(100,68, 74, 88));
+        paint = new Paint();
+        paint.setColor(Color.WHITE);
+        paint.setStrokeWidth(1);
+        paint.setTextSize(50);
         loadIntentData();
-        serverConnection.createConnection();
+        ServerConnection.createConnection();
         checkGameStatus();
     }
 
@@ -180,17 +184,9 @@ public class MainActivity extends AppCompatActivity {
         mImageView.getLayoutParams().width = panelSize;
         int p;
 
-        Bitmap bitmap = Bitmap.createBitmap(panelSize, panelSize, Bitmap.Config.ARGB_8888);
-        canvas = new Canvas(bitmap);
-        canvas.drawColor(Color.argb(150,68, 74, 88));
-        paint = new Paint();
-        paint.setColor(Color.WHITE);
-        paint.setStrokeWidth(1);
-        paint.setTextSize(50);
-
-        board=serverResponse.getBoard();
+        ServerConnection.getGame();
         android.widget.TextView tv = findViewById(R.id.shotsNumber);
-        tv.setText(String.valueOf(serverResponse.getSteps()));
+        tv.setText(String.valueOf(ServerConnection.serverResponse.getSteps()));
 
         for (int i=0;i<9;i++){
             canvas.drawLine(i*size+size, 0, i*size+size, panelSize, paint);
@@ -201,13 +197,13 @@ public class MainActivity extends AppCompatActivity {
         for (int y = 0; y < 9; y++) {
             for (int x = 0; x < 9; x++) {
                 p = y * 9 + x;
-                if (board.charAt(p) >= '0' && board.charAt(p) <= '9') {
+                if (ServerConnection.serverResponse.getBoard().charAt(p) >= '0' && ServerConnection.serverResponse.getBoard().charAt(p) <= '9') {
 //                    canvas.drawLine(x*size, y*size, x*size + size, y*size + size,paint);
 //                    canvas.drawLine(x*size, y*size + size, x*size + size, y*size,paint);
 //                    canvas.drawText(Character.toString(board.charAt(p)),x*size + (int) (size/2), y*size + (int) (size/4),paint);
-                    canvas.drawText(Character.toString(board.charAt(p)),x*size + (int) (size/2)-(paint.getTextSize()/4), y*size + (int) (size/2) + (paint.getTextSize()/4),paint);
-                } else if (board.charAt(p) >= 'A' && board.charAt(p) <= 'Z'){
-                    drawShip(board.charAt(p),x*size + 1, y*size + 1, (x+1)*size - 1, (y+1)*size - 1);
+                    canvas.drawText(Character.toString(ServerConnection.serverResponse.getBoard().charAt(p)),x*size + (int) (size/2)-(paint.getTextSize()/4), y*size + (int) (size/2) + (paint.getTextSize()/4),paint);
+                } else if (ServerConnection.serverResponse.getBoard().charAt(p) >= 'A' && ServerConnection.serverResponse.getBoard().charAt(p) <= 'Z'){
+                    drawShip(ServerConnection.serverResponse.getBoard().charAt(p),x*size + 1, y*size + 1, (x+1)*size - 1, (y+1)*size - 1);
                 }
 
             }
@@ -243,9 +239,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadIntentData(){
         Intent intent = getIntent();
-        serverConnection.user = intent.getStringExtra("USERNAME");
-        serverConnection.setPassword(intent.getStringExtra("PASSWORD"));
-        serverConnection.serverUrl = intent.getStringExtra("SERVER");
+        ServerConnection.user = intent.getStringExtra("USERNAME");
+        ServerConnection.setPassword(intent.getStringExtra("PASSWORD"));
+        ServerConnection.serverUrl = intent.getStringExtra("SERVER");
     }
 
     public void showLog(View v){
