@@ -10,12 +10,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ServerConnection {
 
-    private JsonPlaceholderAPI jsonPlaceholderAPI;
-//    private ServerResponse serverResponse;
-//    String user = "example";
-//    String serverUrl = "https://techify.tk/spaceships/";
-    String user;
-    String serverUrl;
+    private static JsonPlaceholderAPI jsonPlaceholderAPI;
+    static ServerResponse serverResponse;
+    static String user;
+    private static String password;
+    static String serverUrl;
 
 
     public ServerConnection(){
@@ -33,42 +32,46 @@ public class ServerConnection {
         jsonPlaceholderAPI = retrofit.create(JsonPlaceholderAPI.class);
     }
 
-    public ServerResponse getGame(){
+    public static ServerResponse getGame(){
 
-        Call<ServerResponse> call = jsonPlaceholderAPI.getgame(user);
+        Call<ServerResponse> call = jsonPlaceholderAPI.getgame(user+password);
 
         try {
-            MainActivity.serverResponse = call.execute().body();
+            serverResponse = call.execute().body();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return MainActivity.serverResponse;
+        return serverResponse;
     }
 
-    public ServerResponse shotGame(String shot){
+    public static ServerResponse shotGame(String shot){
 
-        Call<ServerResponse> call = jsonPlaceholderAPI.shotgame(user,shot);
+        Call<ServerResponse> call = jsonPlaceholderAPI.shotgame(user+password,shot);
 
         try {
-            MainActivity.serverResponse = call.execute().body();
+            serverResponse = call.execute().body();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return MainActivity.serverResponse;
+        return serverResponse;
     }
 
-    public ServerResponse newGame(){
+    public static ServerResponse newGame(){
 
-        Call<ServerResponse> call = jsonPlaceholderAPI.newgame(user);
+        Call<ServerResponse> call = jsonPlaceholderAPI.newgame(user+password);
 
         try {
-            MainActivity.serverResponse = call.execute().body();
+            serverResponse = call.execute().body();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return MainActivity.serverResponse;
+        return serverResponse;
+    }
+
+    public static void setPassword(String pass){
+        ServerConnection.password=pass;
     }
 }

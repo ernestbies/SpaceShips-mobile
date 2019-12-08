@@ -54,7 +54,8 @@ public class LoginActivity extends AppCompatActivity {
 
     public void loginToGame(View view) {
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("USERNAME", String.valueOf(loginField.getText()+md5(String.valueOf(passwordField.getText()))));
+        intent.putExtra("USERNAME", String.valueOf(loginField.getText()));
+        intent.putExtra("PASSWORD", md5(String.valueOf(passwordField.getText())));
         intent.putExtra("SERVER", String.valueOf(serverField.getText()));
 
         if(rememberSwitch.isChecked()){
