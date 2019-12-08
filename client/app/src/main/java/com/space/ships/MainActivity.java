@@ -14,12 +14,16 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import static android.view.View.SYSTEM_UI_FLAG_FULLSCREEN;
@@ -59,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         init();
         addTouchListener();
         draw();
+        setTextRules();
     }
 
     private void addTouchListener(){
@@ -233,6 +238,14 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         serverConnection.user = intent.getStringExtra("USERNAME");
         serverConnection.serverUrl = intent.getStringExtra("SERVER");
+    }
+
+    private void setTextRules(){
+        WebView wv = findViewById(R.id.webView);
+        WebSettings wvs = wv.getSettings();
+        wvs.setTextSize(WebSettings.TextSize.SMALLER);
+        wv.loadUrl("file:///android_asset/rules.html");
+        wv.setBackgroundColor(Color.TRANSPARENT);
     }
 }
 
