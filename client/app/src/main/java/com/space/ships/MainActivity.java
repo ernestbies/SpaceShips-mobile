@@ -10,6 +10,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.StrictMode;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -76,19 +78,25 @@ public class MainActivity extends AppCompatActivity {
         switch(serverResponse.getCode()){
 
             case "MISS":
-                System.out.println("MISS");
+                android.media.MediaPlayer.create(this,R.raw.miss).start();
+                ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE));
                 break;
             case "HIT":
-                System.out.println("HIT");
+                android.media.MediaPlayer.create(this,R.raw.hit).start();
+                ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(30, VibrationEffect.DEFAULT_AMPLITUDE));
                 break;
             case "SHOTDOWN":
-                System.out.println("SHOTDOWN");
+                android.media.MediaPlayer.create(this,R.raw.shotdown).start();
+                ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
                 break;
             case "CHECKED":
-                System.out.println("CHECKED");
+                android.media.MediaPlayer.create(this,R.raw.checked).start();
+                ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE));
                 break;
             case "ENDGAME":
-                System.out.println("ENDGAME");
+                android.media.MediaPlayer.create(this,R.raw.endgame).start();
+                long[] pattern = {0,100,100,300};
+                ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createWaveform(pattern,-1));
                 new AlertDialog.Builder(this)
                         .setTitle("ENDGAME")
                         .setMessage("Liczba kroków: "+serverResponse.getSteps())
@@ -101,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
                         .setNegativeButton("EXIT", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-//                                dialog.dismiss();
                                 System.exit(1);
                             }
                         })
@@ -121,10 +128,12 @@ public class MainActivity extends AppCompatActivity {
         switch(serverResponse.getCode()){
             case "NOGAME":
                 serverConnection.newGame();
+                android.media.MediaPlayer.create(this,R.raw.newloadgame).start();
                 Toast.makeText(this,"New game created", Toast.LENGTH_LONG).show();
                 break;
             case "LOADGAME":
                 serverConnection.getGame();
+                android.media.MediaPlayer.create(this,R.raw.newloadgame).start();
                 Toast.makeText(this,"Game loaded", Toast.LENGTH_LONG).show();
                 break;
         }
