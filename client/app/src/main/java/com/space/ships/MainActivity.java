@@ -2,6 +2,8 @@ package com.space.ships;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -16,6 +18,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import static android.view.View.SYSTEM_UI_FLAG_FULLSCREEN;
 import static android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
@@ -35,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private Paint paint;
     private Drawable mCustomImageA, mCustomImageB,mCustomImageC,mCustomImageD;
     private ServerConnection serverConnection = new ServerConnection();
-    private ServerResponse serverResponse;
+    static ServerResponse serverResponse;
 
 
     @Override
@@ -53,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
         init();
         addTouchListener();
-//        draw();
+        draw();
     }
 
     private void addTouchListener(){
@@ -113,6 +116,19 @@ public class MainActivity extends AppCompatActivity {
         draw();
     }
 
+    private void checkGameStatus(){
+        serverResponse = serverConnection.getGame();
+        switch(serverResponse.getCode()){
+            case "NOGAME":
+                serverConnection.newGame();
+                Toast.makeText(this,"New game created", Toast.LENGTH_LONG).show();
+                break;
+            case "LOADGAME":
+                serverConnection.getGame();
+                Toast.makeText(this,"Game loaded", Toast.LENGTH_LONG).show();
+                break;
+        }
+    }
 
     private void init(){
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -123,7 +139,6 @@ public class MainActivity extends AppCompatActivity {
         for (int i =0;i<81;i++) {
             board+=" ";
         }
-//	board="0 CCC2    45 3 C4CDDDD  C6C 3  1 C4C1 111 34 B32A11BB B3A 44  124 DDDD 01BB    10";
 
         panelSize = height-10;
         size = (panelSize/9);
@@ -133,7 +148,9 @@ public class MainActivity extends AppCompatActivity {
         mCustomImageB = mImageView.getResources().getDrawable(R.drawable.b);
         mCustomImageC = mImageView.getResources().getDrawable(R.drawable.c);
         mCustomImageD = mImageView.getResources().getDrawable(R.drawable.d);
-        serverResponse=serverConnection.getGame();
+        loadIntentData();
+        serverConnection.createConnection();
+        checkGameStatus();
     }
 
     private void draw(){
@@ -200,8 +217,13 @@ public class MainActivity extends AppCompatActivity {
                 mCustomImageD.draw(canvas);
                 break;
         }
+    }
 
 
+    private void loadIntentData(){
+        Intent intent = getIntent();
+        serverConnection.user = intent.getStringExtra("USERNAME");
+        serverConnection.serverUrl = intent.getStringExtra("SERVER");
     }
 }
 

@@ -11,19 +11,20 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ServerConnection {
 
     private JsonPlaceholderAPI jsonPlaceholderAPI;
-    private ServerResponse serverResponse;
-    String user = "example";
-    String serverUrl = "https://techify.tk/spaceships/";
+//    private ServerResponse serverResponse;
+//    String user = "example";
+//    String serverUrl = "https://techify.tk/spaceships/";
+    String user;
+    String serverUrl;
 
 
     public ServerConnection(){
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        createConnection();
     }
 
 
-    private void createConnection(){
+    void createConnection(){
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(serverUrl)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -37,12 +38,12 @@ public class ServerConnection {
         Call<ServerResponse> call = jsonPlaceholderAPI.getgame(user);
 
         try {
-            serverResponse = call.execute().body();
+            MainActivity.serverResponse = call.execute().body();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return serverResponse;
+        return MainActivity.serverResponse;
     }
 
     public ServerResponse shotGame(String shot){
@@ -50,12 +51,12 @@ public class ServerConnection {
         Call<ServerResponse> call = jsonPlaceholderAPI.shotgame(user,shot);
 
         try {
-            serverResponse = call.execute().body();
+            MainActivity.serverResponse = call.execute().body();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return serverResponse;
+        return MainActivity.serverResponse;
     }
 
     public ServerResponse newGame(){
@@ -63,11 +64,11 @@ public class ServerConnection {
         Call<ServerResponse> call = jsonPlaceholderAPI.newgame(user);
 
         try {
-            serverResponse = call.execute().body();
+            MainActivity.serverResponse = call.execute().body();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return serverResponse;
+        return MainActivity.serverResponse;
     }
 }
