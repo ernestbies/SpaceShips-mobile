@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
+    android:background="@drawable/bg_login5"
     tools:context=".LoginActivity">
 
     <EditText
@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:ems="10"
-        android:hint="Password"
+        android:hint="Hasło"
         android:inputType="textPassword"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:ems="10"
-        android:hint="Username"
+        android:hint="Nazwa użytkownika"
         android:inputType="textPersonName"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:onClick="loginToGame"
-        android:text="Login"
+        android:text="Zaloguj"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -52,6 +52,7 @@
         android:layout_width="204dp"
         android:layout_height="208dp"
         android:layout_marginTop="100dp"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -64,6 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         android:ems="10"
+        android:hint="Adres serwera"
         android:inputType="textPersonName"
         android:text="https://techify.tk/spaceships/"
         android:textAlignment="center"
@@ -76,7 +78,7 @@
         android:id="@+id/rememberSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Remember me "
+        android:text="Zapamiętaj dane "
         app:layout_constraintEnd_toEndOf="@+id/passwordField"
         app:layout_constraintTop_toBottomOf="@+id/passwordField" />
 </android.support.constraint.ConstraintLayout>
