@@ -85,23 +85,28 @@ public class MainActivity extends AppCompatActivity {
             case "MISS":
                 android.media.MediaPlayer.create(this,R.raw.miss).start();
                 ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE));
+                LogActivity.textContent+="<font color=\"#FFFF00\">"+ServerConnection.user+"</font>"+" : " + "Missed!<br>";
                 break;
             case "HIT":
                 android.media.MediaPlayer.create(this,R.raw.hit).start();
                 ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(30, VibrationEffect.DEFAULT_AMPLITUDE));
+                LogActivity.textContent+="<font color=\"#FFFF00\">"+ServerConnection.user+"</font>"+" : " + "<font color=\"#FFC0CB\">"+"Hit! "+ServerConnection.serverResponse.getShipName()+"("+ServerConnection.serverResponse.getType()+")"+"</font><br>";
                 break;
             case "SHOTDOWN":
                 android.media.MediaPlayer.create(this,R.raw.shotdown).start();
                 ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
+                LogActivity.textContent+="<font color=\"#FFFF00\">"+ServerConnection.user+"</font>"+" : " + "<font color=\"#FF0000\">"+"Shot down! "+ServerConnection.serverResponse.getShipName()+"("+ServerConnection.serverResponse.getType()+")"+"</font><br>";
                 break;
             case "CHECKED":
                 android.media.MediaPlayer.create(this,R.raw.checked).start();
                 ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE));
+                LogActivity.textContent+="<font color=\"#FFFF00\">"+ServerConnection.user+"</font>"+" : "+"<font color=\"#FFA500\">"+ "["+(x+1) + " " + (y+1)+"]</font>" +" "+" field was already checked<br>";
                 break;
             case "ENDGAME":
                 android.media.MediaPlayer.create(this,R.raw.endgame).start();
                 long[] pattern = {0,100,100,300};
                 ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createWaveform(pattern,-1));
+                LogActivity.textContent+="<font color=\"#FFFF00\">"+ServerConnection.user+"</font>"+" : "+"<font color=\"#008000\">"+ "["+(x+1) + " " + (y+1)+"]</font>" +" "+" field was already checked<br>";
                 new AlertDialog.Builder(this)
                         .setTitle("ENDGAME")
                         .setMessage("Liczba kroków: "+serverResponse.getSteps())
@@ -135,11 +140,13 @@ public class MainActivity extends AppCompatActivity {
                 serverConnection.newGame();
                 android.media.MediaPlayer.create(this,R.raw.newloadgame).start();
                 Toast.makeText(this,"New game created", Toast.LENGTH_LONG).show();
+                LogActivity.textContent+="<font color=\"#FFFF00\">"+ServerConnection.user+"</font>"+" : "+"<font color=\"#00FFFF\">"+"New game created</font><br>";
                 break;
             case "LOADGAME":
                 serverConnection.getGame();
                 android.media.MediaPlayer.create(this,R.raw.newloadgame).start();
                 Toast.makeText(this,"Game loaded", Toast.LENGTH_LONG).show();
+                LogActivity.textContent+="<font color=\"#FFFF00\">"+ServerConnection.user+"</font>"+" : "+"<font color=\"#00FFFF\">"+"Game loaded</font><br>";
                 break;
         }
     }
@@ -237,9 +244,14 @@ public class MainActivity extends AppCompatActivity {
     private void loadIntentData(){
         Intent intent = getIntent();
         serverConnection.user = intent.getStringExtra("USERNAME");
+        serverConnection.setPassword(intent.getStringExtra("PASSWORD"));
         serverConnection.serverUrl = intent.getStringExtra("SERVER");
     }
 
+    public void testFun(View v){
+        Intent intent = new Intent(this, LogActivity.class);
+        startActivity(intent);
+    }
     private void setTextRules(){
         WebView wv = findViewById(R.id.webView);
         WebSettings wvs = wv.getSettings();
