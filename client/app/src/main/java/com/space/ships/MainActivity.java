@@ -248,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
         serverConnection.serverUrl = intent.getStringExtra("SERVER");
     }
 
-    public void testFun(View v){
+    public void showLog(View v){
         Intent intent = new Intent(this, LogActivity.class);
         startActivity(intent);
     }
