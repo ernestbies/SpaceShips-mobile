@@ -13,6 +13,9 @@ import android.os.StrictMode;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -36,7 +39,7 @@ import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
 import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private ImageView mImageView;
     private int panelSize;
@@ -45,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private Canvas canvas;
     private Paint paint;
     private Drawable mCustomImageA, mCustomImageB,mCustomImageC,mCustomImageD;
+    private DrawerLayout drawer;
 
 
     @Override
@@ -57,6 +61,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mImageView = (ImageView) findViewById(R.id.imageView);
+        
+        drawer = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -254,6 +262,39 @@ public class MainActivity extends AppCompatActivity {
         wvs.setTextSize(WebSettings.TextSize.SMALLER);
         wv.loadUrl("file:///android_asset/rules.html");
         wv.setBackgroundColor(Color.TRANSPARENT);
+    }
+
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        switch (menuItem.getItemId()){
+            case R.id.nav_newgame:
+                newGame(null);
+                break;
+            case R.id.nav_settings:
+                Toast.makeText(this, "settings", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_logs:
+                showLog(null);
+                break;
+            case R.id.nav_logout:
+                finish();
+                break;
+            case R.id.nav_ranking:
+                Toast.makeText(this, "ranking", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_info:
+                new AlertDialog.Builder(this)
+                        .setTitle("Informacje")
+                        .setMessage("Autorzy: \n" +
+                                "Ernest Bieś" + "\n" +
+                                "Konrad Czechowski" + "\n" +
+                                "Dawid Kwaśny")
+                        .show();
+                break;
+        }
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 }
 
