@@ -1,9 +1,7 @@
 package com.space.ships;
 
 import android.os.StrictMode;
-
 import java.io.IOException;
-
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -32,7 +30,7 @@ public class ServerConnection {
         jsonPlaceholderAPI = retrofit.create(JsonPlaceholderAPI.class);
     }
 
-    public static ServerResponse getGame(){
+    static ServerResponse getGame(){
 
         Call<ServerResponse> call = jsonPlaceholderAPI.getgame(user+password);
 
@@ -45,7 +43,7 @@ public class ServerConnection {
         return serverResponse;
     }
 
-    public static ServerResponse shotGame(String shot){
+    static void shotGame(String shot){
 
         Call<ServerResponse> call = jsonPlaceholderAPI.shotgame(user+password,shot);
 
@@ -55,10 +53,9 @@ public class ServerConnection {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return serverResponse;
     }
 
-    public static ServerResponse newGame(){
+    static void newGame(){
 
         Call<ServerResponse> call = jsonPlaceholderAPI.newgame(user+password);
 
@@ -68,10 +65,9 @@ public class ServerConnection {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return serverResponse;
     }
 
-    public static void setPassword(String pass){
+    static void setPassword(String pass){
         ServerConnection.password=pass;
     }
 }

@@ -1,9 +1,9 @@
 package com.space.ships;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -14,13 +14,12 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Html;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,9 +27,8 @@ import android.view.Window;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
-
+import java.util.Objects;
 import static android.view.View.SYSTEM_UI_FLAG_FULLSCREEN;
 import static android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 import static android.view.View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
@@ -50,7 +48,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Drawable mCustomImageA, mCustomImageB,mCustomImageC,mCustomImageD;
     private DrawerLayout drawer;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,20 +57,76 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 SYSTEM_UI_FLAG_LAYOUT_STABLE | SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
-        mImageView = (ImageView) findViewById(R.id.imageView);
-        
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
         init();
         addTouchListener();
         draw();
         setTextRules();
     }
 
+    private void init(){
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int height = displayMetrics.heightPixels;
+        mImageView = findViewById(R.id.imageView);
+        panelSize = height-10;
+        size = (panelSize/9);
+        panelSize = 9 * size;
+
+        mCustomImageA = ContextCompat.getDrawable(this, R.drawable.a);
+        mCustomImageB = ContextCompat.getDrawable(this, R.drawable.b);
+        mCustomImageC = ContextCompat.getDrawable(this, R.drawable.c);
+        mCustomImageD = ContextCompat.getDrawable(this, R.drawable.d);
+        bitmap = Bitmap.createBitmap(panelSize, panelSize, Bitmap.Config.ARGB_8888);
+        canvas = new Canvas(bitmap);
+        canvas.drawColor(Color.argb(100,68, 74, 88));
+        paint = new Paint();
+        paint.setColor(Color.WHITE);
+        paint.setStrokeWidth(1);
+        paint.setTextSize(50);
+        checkGameStatus();
+    }
+
+    private void draw(){
+        mImageView.requestLayout();
+        mImageView.getLayoutParams().height = panelSize;
+        mImageView.getLayoutParams().width = panelSize;
+        int p;
+        char character;
+
+        android.widget.TextView tv = findViewById(R.id.shotsNumber);
+        tv.setText(String.valueOf(ServerConnection.serverResponse.getSteps()));
+
+        for (int i=0;i<9;i++){
+            canvas.drawLine(i*size+size, 0, i*size+size, panelSize, paint);
+            canvas.drawLine(0, i*size+size, panelSize, i*size+size, paint);
+        }
+
+
+        for (int y = 0; y < 9; y++) {
+            for (int x = 0; x < 9; x++) {
+                p = y * 9 + x;
+                character = ServerConnection.serverResponse.getBoard().charAt(p);
+                paint.setTextAlign(Paint.Align.CENTER);
+                float textVertOffset = (paint.descent() - paint.ascent())/2 - paint.descent();
+                if (character >= '0' && character <= '9') {
+                    canvas.drawText(Character.toString(character), x*size + size/2, (y+0.5f)*size + textVertOffset, paint);
+                } else if (character >= 'A' && character <= 'Z'){
+                    drawShip(character,x*size + 1, y*size + 1, (x+1)*size - 1, (y+1)*size - 1);
+                }
+
+            }
+            mImageView.setImageBitmap(bitmap);
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
     private void addTouchListener(){
         mImageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -92,28 +145,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case "MISS":
                 android.media.MediaPlayer.create(this,R.raw.miss).start();
-                ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE));
+                ((Vibrator) Objects.requireNonNull(getSystemService(VIBRATOR_SERVICE))).vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE));
                 LogActivity.textContent+="<font color=\"#FFFF00\">"+ServerConnection.user+"</font>"+" : " + "Missed!<br>";
                 break;
             case "HIT":
                 android.media.MediaPlayer.create(this,R.raw.hit).start();
-                ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(30, VibrationEffect.DEFAULT_AMPLITUDE));
+                ((Vibrator) Objects.requireNonNull(getSystemService(VIBRATOR_SERVICE))).vibrate(VibrationEffect.createOneShot(30, VibrationEffect.DEFAULT_AMPLITUDE));
                 LogActivity.textContent+="<font color=\"#FFFF00\">"+ServerConnection.user+"</font>"+" : " + "<font color=\"#FFC0CB\">"+"Hit! "+ServerConnection.serverResponse.getShipName()+"("+ServerConnection.serverResponse.getType()+")"+"</font><br>";
                 break;
             case "SHOTDOWN":
                 android.media.MediaPlayer.create(this,R.raw.shotdown).start();
-                ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
+                ((Vibrator) Objects.requireNonNull(getSystemService(VIBRATOR_SERVICE))).vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
                 LogActivity.textContent+="<font color=\"#FFFF00\">"+ServerConnection.user+"</font>"+" : " + "<font color=\"#FF0000\">"+"Shot down! "+ServerConnection.serverResponse.getShipName()+"("+ServerConnection.serverResponse.getType()+")"+"</font><br>";
                 break;
             case "CHECKED":
                 android.media.MediaPlayer.create(this,R.raw.checked).start();
-                ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE));
+                ((Vibrator) Objects.requireNonNull(getSystemService(VIBRATOR_SERVICE))).vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE));
                 LogActivity.textContent+="<font color=\"#FFFF00\">"+ServerConnection.user+"</font>"+" : "+"<font color=\"#FFA500\">"+ "["+(x+1) + " " + (y+1)+"]</font>" +" "+" field was already checked<br>";
                 break;
             case "ENDGAME":
                 android.media.MediaPlayer.create(this,R.raw.endgame).start();
                 long[] pattern = {0,100,100,300};
-                ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(VibrationEffect.createWaveform(pattern,-1));
+                ((Vibrator) Objects.requireNonNull(getSystemService(VIBRATOR_SERVICE))).vibrate(VibrationEffect.createWaveform(pattern,-1));
                 LogActivity.textContent+="<font color=\"#FFFF00\">"+ServerConnection.user+"</font>"+" : "+"<font color=\"#008000\">"+ "["+(x+1) + " " + (y+1)+"]</font>" +" "+" field was already checked<br>";
                 new AlertDialog.Builder(this)
                         .setTitle("ENDGAME")
@@ -161,67 +214,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void init(){
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int height = displayMetrics.heightPixels;
-
-        panelSize = height-10;
-        size = (panelSize/9);
-        panelSize = 9 * size;
-
-        mCustomImageA = mImageView.getResources().getDrawable(R.drawable.a);
-        mCustomImageB = mImageView.getResources().getDrawable(R.drawable.b);
-        mCustomImageC = mImageView.getResources().getDrawable(R.drawable.c);
-        mCustomImageD = mImageView.getResources().getDrawable(R.drawable.d);
-        bitmap = Bitmap.createBitmap(panelSize, panelSize, Bitmap.Config.ARGB_8888);
-        canvas = new Canvas(bitmap);
-        canvas.drawColor(Color.argb(100,68, 74, 88));
-        paint = new Paint();
-        paint.setColor(Color.WHITE);
-        paint.setStrokeWidth(1);
-        paint.setTextSize(50);
-//        loadIntentData();
-//        ServerConnection.createConnection();
-        checkGameStatus();
-    }
-
-    private void draw(){
-        mImageView.requestLayout();
-        mImageView.getLayoutParams().height = panelSize;
-        mImageView.getLayoutParams().width = panelSize;
-        int p;
-
-//        ServerConnection.getGame();
-        android.widget.TextView tv = findViewById(R.id.shotsNumber);
-        tv.setText(String.valueOf(ServerConnection.serverResponse.getSteps()));
-
-        for (int i=0;i<9;i++){
-            canvas.drawLine(i*size+size, 0, i*size+size, panelSize, paint);
-            canvas.drawLine(0, i*size+size, panelSize, i*size+size, paint);
-        }
-
-
-        for (int y = 0; y < 9; y++) {
-            for (int x = 0; x < 9; x++) {
-                p = y * 9 + x;
-                if (ServerConnection.serverResponse.getBoard().charAt(p) >= '0' && ServerConnection.serverResponse.getBoard().charAt(p) <= '9') {
-//                    canvas.drawLine(x*size, y*size, x*size + size, y*size + size,paint);
-//                    canvas.drawLine(x*size, y*size + size, x*size + size, y*size,paint);
-//                    canvas.drawText(Character.toString(board.charAt(p)),x*size + (int) (size/2), y*size + (int) (size/4),paint);
-                    canvas.drawText(Character.toString(ServerConnection.serverResponse.getBoard().charAt(p)),x*size + (int) (size/2)-(paint.getTextSize()/4), y*size + (int) (size/2) + (paint.getTextSize()/4),paint);
-                } else if (ServerConnection.serverResponse.getBoard().charAt(p) >= 'A' && ServerConnection.serverResponse.getBoard().charAt(p) <= 'Z'){
-                    drawShip(ServerConnection.serverResponse.getBoard().charAt(p),x*size + 1, y*size + 1, (x+1)*size - 1, (y+1)*size - 1);
-                }
-
-            }
-
-        mImageView.setImageBitmap(bitmap);
-
-
-        }
-    }
-
     private void drawShip(char c,int l, int t, int r, int b){
 
         switch(c){
@@ -244,14 +236,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-
-    private void loadIntentData(){
-        Intent intent = getIntent();
-        ServerConnection.user = intent.getStringExtra("USERNAME");
-        ServerConnection.setPassword(intent.getStringExtra("PASSWORD"));
-        ServerConnection.serverUrl = intent.getStringExtra("SERVER");
-    }
-
     public void showLog(View v){
         Intent intent = new Intent(this, LogActivity.class);
         startActivity(intent);
@@ -259,11 +243,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void setTextRules(){
         WebView wv = findViewById(R.id.webView);
         WebSettings wvs = wv.getSettings();
-        wvs.setTextSize(WebSettings.TextSize.SMALLER);
+        wvs.setTextZoom(75);
         wv.loadUrl("file:///android_asset/rules.html");
         wv.setBackgroundColor(Color.TRANSPARENT);
     }
-
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {

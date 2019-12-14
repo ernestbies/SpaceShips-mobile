@@ -25,23 +25,23 @@ class ServerResponse {
     @Expose
     private String board;
 
-    public String getCode() {
+    String getCode() {
         return code;
     }
 
-    public String getShipName() {
+    String getShipName() {
         return shipName;
     }
 
-    public int getType() {
+    int getType() {
         return type;
     }
 
-    public int getSteps() {
+    int getSteps() {
         return steps;
     }
 
-    public String getBoard() {
+    String getBoard() {
         return board;
     }
 }
