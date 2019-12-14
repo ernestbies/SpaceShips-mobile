@@ -3,12 +3,14 @@ package com.space.ships;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Message;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import java.math.BigInteger;
 import java.security.DigestInputStream;
@@ -32,6 +34,9 @@ public class LoginActivity extends AppCompatActivity {
         serverField = findViewById(R.id.serverField);
         rememberSwitch = findViewById(R.id.rememberSwitch);
         loginButton = findViewById(R.id.loginButton);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         loadData();
     }
@@ -61,7 +66,20 @@ public class LoginActivity extends AppCompatActivity {
         if(rememberSwitch.isChecked()){
             saveData();
         }
-        startActivity(intent);
+        if(loginField.getText().length() != 0 && passwordField.getText().length() != 0 && serverField.getText().length() != 0){
+            ServerConnection.user = intent.getStringExtra("USERNAME");
+            ServerConnection.setPassword(intent.getStringExtra("PASSWORD"));
+            ServerConnection.serverUrl = intent.getStringExtra("SERVER");
+            ServerConnection.createConnection();
+
+            if(ServerConnection.getGame() == null) {
+                Toast.makeText(this, "Błędny adres serwera", Toast.LENGTH_LONG).show();
+            }else {
+                startActivity(intent);
+            }
+        }else{
+            Toast.makeText(this, "Błędne dane logowania", Toast.LENGTH_LONG).show();
+        }
     }
 
     public static String md5(String input) {

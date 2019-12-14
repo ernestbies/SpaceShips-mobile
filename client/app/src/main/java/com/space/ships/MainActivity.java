@@ -181,8 +181,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         paint.setColor(Color.WHITE);
         paint.setStrokeWidth(1);
         paint.setTextSize(50);
-        loadIntentData();
-        ServerConnection.createConnection();
+//        loadIntentData();
+//        ServerConnection.createConnection();
         checkGameStatus();
     }
 
@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mImageView.getLayoutParams().width = panelSize;
         int p;
 
-        ServerConnection.getGame();
+//        ServerConnection.getGame();
         android.widget.TextView tv = findViewById(R.id.shotsNumber);
         tv.setText(String.valueOf(ServerConnection.serverResponse.getSteps()));
 
