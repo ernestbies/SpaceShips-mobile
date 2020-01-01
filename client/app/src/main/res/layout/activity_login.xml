@@ -67,7 +67,6 @@
         android:ems="10"
         android:hint="Adres serwera"
         android:inputType="textPersonName"
-        android:text="https://techify.tk/spaceships/"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -81,4 +80,15 @@
         android:text="Zapamiętaj dane "
         app:layout_constraintEnd_toEndOf="@+id/passwordField"
         app:layout_constraintTop_toBottomOf="@+id/passwordField" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:foregroundTint="#00BE1616"
+        android:onClick="openSettings"
+        android:tint="#565A69"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_settings_24dp" />
 </android.support.constraint.ConstraintLayout>

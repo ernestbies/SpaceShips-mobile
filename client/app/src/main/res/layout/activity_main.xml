@@ -64,19 +64,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <Button
-                    android:id="@+id/button"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:onClick="showLog"
-                    android:text="LOGS"
-                    android:visibility="invisible"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/webView"
-                    app:layout_constraintStart_toEndOf="@+id/shotsNumber"
-                    app:layout_constraintTop_toBottomOf="@+id/webView"
-                    tools:visibility="invisible" />
-
                 <WebView
                     android:id="@+id/webView"
                     android:layout_width="0dp"

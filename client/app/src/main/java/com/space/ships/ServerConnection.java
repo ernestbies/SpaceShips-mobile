@@ -67,6 +67,19 @@ public class ServerConnection {
         }
     }
 
+    public static String getRank(){
+
+        Call<ServerResponse> call = jsonPlaceholderAPI.getrank();
+
+        try {
+            return call.execute().body().getBoard();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     static void setPassword(String pass){
         ServerConnection.password=pass;
     }

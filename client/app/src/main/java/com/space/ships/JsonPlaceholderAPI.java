@@ -16,4 +16,6 @@ public interface JsonPlaceholderAPI {
     @GET("api/shotgame")
     Call<ServerResponse> shotgame(@Query("user") String user, @Query("shot") String shot);
 
+    @GET("api/getrank")
+    Call<ServerResponse> getrank();
 }

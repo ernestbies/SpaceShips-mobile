@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -12,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.os.StrictMode;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Paint paint;
     private Drawable mCustomImageA, mCustomImageB,mCustomImageC,mCustomImageD;
     private DrawerLayout drawer;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         addTouchListener();
         draw();
         setTextRules();
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     private void init(){
@@ -141,32 +145,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void shotGame(int x, int y){
         ServerConnection.shotGame(""+x+y);
+        boolean enableSounds = sharedPreferences.getBoolean("pref_sounds", true);
+        boolean enableVibration = sharedPreferences.getBoolean("pref_vibrate", true);
         switch(ServerConnection.serverResponse.getCode()){
 
             case "MISS":
-                android.media.MediaPlayer.create(this,R.raw.miss).start();
-                ((Vibrator) Objects.requireNonNull(getSystemService(VIBRATOR_SERVICE))).vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE));
+                if(enableSounds) android.media.MediaPlayer.create(this,R.raw.miss).start();
+                if(enableVibration) ((Vibrator) Objects.requireNonNull(getSystemService(VIBRATOR_SERVICE))).vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE));
                 LogActivity.textContent+="<font color=\"#FFFF00\">"+ServerConnection.user+"</font>"+" : " + "Missed!<br>";
                 break;
             case "HIT":
-                android.media.MediaPlayer.create(this,R.raw.hit).start();
-                ((Vibrator) Objects.requireNonNull(getSystemService(VIBRATOR_SERVICE))).vibrate(VibrationEffect.createOneShot(30, VibrationEffect.DEFAULT_AMPLITUDE));
+                if(enableSounds) android.media.MediaPlayer.create(this,R.raw.hit).start();
+                if(enableVibration) ((Vibrator) Objects.requireNonNull(getSystemService(VIBRATOR_SERVICE))).vibrate(VibrationEffect.createOneShot(30, VibrationEffect.DEFAULT_AMPLITUDE));
                 LogActivity.textContent+="<font color=\"#FFFF00\">"+ServerConnection.user+"</font>"+" : " + "<font color=\"#FFC0CB\">"+"Hit! "+ServerConnection.serverResponse.getShipName()+"("+ServerConnection.serverResponse.getType()+")"+"</font><br>";
                 break;
             case "SHOTDOWN":
-                android.media.MediaPlayer.create(this,R.raw.shotdown).start();
-                ((Vibrator) Objects.requireNonNull(getSystemService(VIBRATOR_SERVICE))).vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
+                if(enableSounds) android.media.MediaPlayer.create(this,R.raw.shotdown).start();
+                if(enableVibration) ((Vibrator) Objects.requireNonNull(getSystemService(VIBRATOR_SERVICE))).vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
                 LogActivity.textContent+="<font color=\"#FFFF00\">"+ServerConnection.user+"</font>"+" : " + "<font color=\"#FF0000\">"+"Shot down! "+ServerConnection.serverResponse.getShipName()+"("+ServerConnection.serverResponse.getType()+")"+"</font><br>";
                 break;
             case "CHECKED":
-                android.media.MediaPlayer.create(this,R.raw.checked).start();
-                ((Vibrator) Objects.requireNonNull(getSystemService(VIBRATOR_SERVICE))).vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE));
+                if(enableSounds) android.media.MediaPlayer.create(this,R.raw.checked).start();
+                if(enableVibration) ((Vibrator) Objects.requireNonNull(getSystemService(VIBRATOR_SERVICE))).vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE));
                 LogActivity.textContent+="<font color=\"#FFFF00\">"+ServerConnection.user+"</font>"+" : "+"<font color=\"#FFA500\">"+ "["+(x+1) + " " + (y+1)+"]</font>" +" "+" field was already checked<br>";
                 break;
             case "ENDGAME":
-                android.media.MediaPlayer.create(this,R.raw.endgame).start();
+                if(enableSounds) android.media.MediaPlayer.create(this,R.raw.endgame).start();
                 long[] pattern = {0,100,100,300};
-                ((Vibrator) Objects.requireNonNull(getSystemService(VIBRATOR_SERVICE))).vibrate(VibrationEffect.createWaveform(pattern,-1));
+                if(enableVibration) ((Vibrator) Objects.requireNonNull(getSystemService(VIBRATOR_SERVICE))).vibrate(VibrationEffect.createWaveform(pattern,-1));
                 LogActivity.textContent+="<font color=\"#FFFF00\">"+ServerConnection.user+"</font>"+" : "+"<font color=\"#008000\">"+ "["+(x+1) + " " + (y+1)+"]</font>" +" "+" field was already checked<br>";
                 new AlertDialog.Builder(this)
                         .setTitle("ENDGAME")
@@ -236,10 +242,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    public void showLog(View v){
-        Intent intent = new Intent(this, LogActivity.class);
-        startActivity(intent);
-    }
     private void setTextRules(){
         WebView wv = findViewById(R.id.webView);
         WebSettings wvs = wv.getSettings();
@@ -250,21 +252,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        Intent intent;
         switch (menuItem.getItemId()){
             case R.id.nav_newgame:
                 newGame(null);
                 break;
             case R.id.nav_settings:
-                Toast.makeText(this, "settings", Toast.LENGTH_SHORT).show();
+                intent = new Intent(this, Settings.class);
+                startActivity(intent);
                 break;
             case R.id.nav_logs:
-                showLog(null);
+                intent = new Intent(this, LogActivity.class);
+                startActivity(intent);
                 break;
             case R.id.nav_logout:
                 finish();
                 break;
             case R.id.nav_ranking:
-                Toast.makeText(this, "ranking", Toast.LENGTH_SHORT).show();
+                new AlertDialog.Builder(this)
+                        .setTitle("Ranking graczy")
+                        .setMessage(ServerConnection.getRank())
+                        .show();
                 break;
             case R.id.nav_info:
                 new AlertDialog.Builder(this)

@@ -3,6 +3,7 @@ package com.space.ships;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -35,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void saveData(){
-        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("USERNAME",String.valueOf(loginField.getText()));
         editor.putString("PASSWORD",String.valueOf(loginField.getText()));
@@ -44,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loadData(){
-        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         loginField.setText(sharedPreferences.getString("USERNAME",""));
         passwordField.setText(sharedPreferences.getString("PASSWORD",""));
         serverField.setText(sharedPreferences.getString("SERVER",""));
@@ -84,5 +85,10 @@ public class LoginActivity extends AppCompatActivity {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public void openSettings(View v) {
+        Intent intent = new Intent(this, Settings.class);
+        startActivity(intent);
     }
 }
