@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <item
+        android:id="@+id/nav_newgame"
+        android:icon="@drawable/b"
+        android:title="Nowa gra" />
+    <item
+        android:id="@+id/nav_settings"
+        android:icon="@drawable/ic_settings_icon"
+        android:title="Ustawienia" />
+    <item
+        android:id="@+id/nav_logs"
+        android:icon="@android:drawable/stat_notify_chat"
+        android:title="Logi serwera" />
+    <item
+        android:id="@+id/nav_logout"
+        android:icon="@drawable/ic_exit_icon"
+        android:title="Wyloguj" />
+
+    <group android:id="@+id/grupa2">
+        <item
+            android:id="@+id/nav_ranking"
+            android:icon="@android:drawable/btn_star_big_on"
+            android:title="Ranking graczy" />
+        <item
+            android:id="@+id/nav_info"
+            android:icon="@android:drawable/ic_dialog_info"
+            android:title="Informacje" />
+    </group>
+</menu>

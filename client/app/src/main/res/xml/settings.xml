@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Ustawienia gry">
+    <SwitchPreference
+        android:key="pref_sounds"
+        android:title="Włącz dźwięk"
+        android:summaryOff="Dźwięki zostały wyłączone"
+        android:summaryOn="Dźwięki są włączone"
+        android:defaultValue="true" />
+    <SwitchPreference
+        android:key="pref_vibrate"
+        android:title="Włącz wibracje"
+        android:summaryOff="Wibracje zostały wyłączone"
+        android:summaryOn="Wibracje są włączone"
+        android:defaultValue="true" />
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="servers">
+        <item>"https://techify.tk/spaceships/"</item>
+        <item>"http://127.0.0.1:8080"</item>
+        <item>"http://10.42.0.1"</item>
+    </array>
+
+</resources>
